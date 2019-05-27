@@ -71,6 +71,15 @@ func (g *Graph) AddNodes(nodes []Node) {
   }
 }
 
+func (g *Graph) HasNode(target Node) bool {
+  for _, node := range g.nodes {
+    if node == target {
+      return true
+    }
+  }
+  return false
+}
+
 func (g *Graph) AddEdge(e Edge) {
   startIndex, _ := g.FindNodeIndex(e.start)
   endIndex, _ := g.FindNodeIndex(e.end)
@@ -99,4 +108,8 @@ func (g *Graph) GetEdges() []Edge {
     }
   }
   return edges
+}
+
+func (g *Graph) GetNodes() []Node {
+  return g.nodes
 }

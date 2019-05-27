@@ -13,10 +13,32 @@ func TestMain(t *testing.T) {
 
 func testBaseGraph(numNodes int, nodeNames string, numEdges int) func(*testing.T) {
   return func(t *testing.T) {
-    graph, _, _:= setupGraph(numNodes, nodeNames, numEdges)
-    graphNumEdges := len(graph.GetEdges())
+    graph, _, expectedEdges := setupGraph(numNodes, nodeNames, numEdges)
+    edges := graph.GetEdges()
+    nodes := graph.GetNodes()
+    graphNumEdges := len(edges)
+    graphNumNodes := len(nodes)
     if graphNumEdges != numEdges {
       t.Error(fmt.Sprintf("Expected %v edges not %v.", numEdges, graphNumEdges))
+    }
+    for _, edge := range edges {
+      if !graph.HasEdge(edge) {
+        t.Error(fmt.Sprintf("Edge expected but not found %v.", edge))
+      }
+    }
+    for _, edge := range expectedEdges {
+      if !graph.HasEdge(edge) {
+        t.Error(fmt.Sprintf("Edge expected but not found %v.", edge))
+      }
+    }
+
+    if graphNumNodes != numNodes {
+      t.Error(fmt.Sprintf("Expected %v nodes not %v.", numNodes, graphNumNodes))
+    }
+    for _, node := range nodes {
+      if !graph.HasNode(node) {
+        t.Error(fmt.Sprintf("Node expected but not found %v.", node))
+      }
     }
   }
 }

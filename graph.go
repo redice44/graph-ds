@@ -48,6 +48,76 @@ func (e Edge) String() string {
 	return fmt.Sprintf("%v -> %v\n", e.start, e.end)
 }
 
+func contains(arr []int, target int) bool {
+	for _, v := range arr {
+		if v == target {
+			return true
+		}
+	}
+	return false
+}
+
+func (g *Graph) BuildTree(start Node) Graph {
+	edges, nodes := g.BuildCompositeTree(start, []int{})
+	graph := Graph{name: start.name}
+	nodes = append([]Node{start}, nodes...)
+	graph.AddNodes(nodes)
+	graph.AddEdges(edges)
+	return graph
+}
+
+func (g *Graph) BuildCompositeTree(start Node, exclusionList []int) ([]Edge, []Node) {
+	neighborEdges := g.GetNeighborsEdges(start)
+	startIndex, _ := g.FindNodeIndex(start)
+	excludedNeighbors := make([]int, 1)
+	excludedNeighbors[0] = startIndex
+	edges := make([]Edge, 0)
+	nodes := make([]Node, 0)
+
+	for _, edge := range neighborEdges {
+		if index, err := g.FindNodeIndex(edge.end); err == nil {
+			excludedNeighbors = append(excludedNeighbors, index)
+		}
+	}
+
+	for _, neighborEdge := range neighborEdges {
+		if index, err := g.FindNodeIndex(neighborEdge.end); err == nil {
+			if !contains(exclusionList, index) {
+				nodes = append(nodes, g.nodes[index])
+				treeEdges, treeNodes := g.BuildCompositeTree(
+					neighborEdge.end,
+					append(exclusionList, excludedNeighbors...),
+				)
+				edges = append(
+					edges,
+					neighborEdge,
+				)
+				edges = append(
+					edges,
+					treeEdges...,
+				)
+				nodes = append(
+					nodes,
+					treeNodes...,
+				)
+			}
+		}
+	}
+	return edges, nodes
+}
+
+func (g *Graph) GetNeighborsEdges(start Node) []Edge {
+	neighbors := make([]Edge, 0)
+	if index, err := g.FindNodeIndex(start); err == nil {
+		for i, v := range g.edges[index] {
+			if v > 0 {
+				neighbors = append(neighbors, Edge{start: start, end: g.nodes[i]})
+			}
+		}
+	}
+	return neighbors
+}
+
 func (g *Graph) FindNodeIndex(target Node) (int, error) {
 	for i, n := range g.nodes {
 		if n == target {

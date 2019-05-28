@@ -7,6 +7,24 @@ import (
 	"time"
 )
 
+func TestNew(t *testing.T) {
+	name := "foo"
+	graph := New(name)
+	nodes := graph.GetNodes()
+	edges := graph.GetEdges()
+	if graph.name != name {
+		t.Error(fmt.Sprintf("Graph not created properly."))
+	}
+
+	if len(nodes) > 0 {
+		t.Error(fmt.Sprintf("Graph should have no nodes."))
+	}
+
+	if len(edges) > 0 {
+		t.Error(fmt.Sprintf("Graph should have no edges."))
+	}
+}
+
 func TestMain(t *testing.T) {
 	baseGraph := buildRandomGraph(5, "Node", 10)
 	tree := setupTree()

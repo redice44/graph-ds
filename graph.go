@@ -183,3 +183,7 @@ func (g *Graph) GetEdges() []Edge {
 func (g *Graph) GetNodes() []Node {
 	return g.nodes
 }
+
+func New(name string) Graph {
+	return Graph{name: name, nodes: make([]Node, 0)}
+}
